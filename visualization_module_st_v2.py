@@ -86,6 +86,20 @@ else:
         'PB Knock Out Probability': pb_knock_out_prob_1000,
         'Volatility Knock Out Probability': volatility_knock_out_prob_1000
     }
+# 显示计算结果
+result_text = """
+当前中证500指数点位：4942.78, 点位敲出率：100.0%
+P/E: 21.2, P/E敲出率：81.48%
+P/B: 1.5567, P/B敲出率：100.0%
+波动率: 24.87%, 波动率敲出率：94.74%
+当前中证1000指数点位：4895.99, 点位敲出率：100.0%
+P/E: 31.59, P/E敲出率：65.38%
+P/B: 1.7054, P/B敲出率：100.0%
+波动率: 30.88%, 波动率敲出率：13.33%
+当前回测P/E: 26.82, 波动率: 20.32%, 历史回测亏损比例: 5.57%
+当前回测P/E: 39.91, 波动率: 20.35%, 历史回测亏损比例: 14.37%
+"""
+st.markdown(result_text)
 # 遍历所有数据框并显示图表和数据
 for title, df in df_map.items():
     st.subheader(title)
