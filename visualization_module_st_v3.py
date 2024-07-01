@@ -11,7 +11,7 @@ point_knock_out_prob_500 = pd.read_excel(file_path, sheet_name='point_knock_out_
 point_knock_out_prob_1000 = pd.read_excel(file_path, sheet_name='point_knock_out_prob_1000')
 pe_knock_out_prob_500 = pd.read_excel(file_path, sheet_name='pe_knock_out_prob_500')
 pe_knock_out_prob_1000 = pd.read_excel(file_path, sheet_name='pe_knock_out_prob_1000')
-pb_knock_out_prob_500 = pd.readexcel(file_path, sheet_name='pb_knock_out_prob_500')
+pb_knock_out_prob_500 = pd.read_excel(file_path, sheet_name='pb_knock_out_prob_500')
 pb_knock_out_prob_1000 = pd.read_excel(file_path, sheet_name='pb_knock_out_prob_1000')
 volatility_knock_out_prob_500 = pd.read_excel(file_path, sheet_name='volatility_knock_out_prob_500')
 volatility_knock_out_prob_1000 = pd.read_excel(file_path, sheet_name='volatility_knock_out_prob_1000')
