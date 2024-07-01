@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # 读取Excel数据
-file_path = r'data\snowball_model.xlsx'
-# df_500 = pd.read_excel(file_path, sheet_name='df_500')
-# df_1000 = pd.read_excel(file_path, sheet_name='df_1000')
+file_path = './data/snowball_model.xlsx'
+df_500 = pd.read_excel(file_path, sheet_name='df_500')
+df_1000 = pd.read_excel(file_path, sheet_name='df_1000')
 point_knock_out_prob_500 = pd.read_excel(file_path, sheet_name='point_knock_out_prob_500')
 point_knock_out_prob_1000 = pd.read_excel(file_path, sheet_name='point_knock_out_prob_1000')
 pe_knock_out_prob_500 = pd.read_excel(file_path, sheet_name='pe_knock_out_prob_500')
