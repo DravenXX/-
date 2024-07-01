@@ -1,12 +1,13 @@
-#不适用sns库以便部署到云端
+# 不适用sns库以便部署到云端
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-
 # 读取Excel数据
-file_path = 'data/snowball_model.xlsx'
+file_path = r'data\snowball_model.xlsx'
+df_500 = pd.read_excel(file_path, sheet_name='df_500')
+df_1000 = pd.read_excel(file_path, sheet_name='df_1000')
 point_knock_out_prob_500 = pd.read_excel(file_path, sheet_name='point_knock_out_prob_500')
 point_knock_out_prob_1000 = pd.read_excel(file_path, sheet_name='point_knock_out_prob_1000')
 pe_knock_out_prob_500 = pd.read_excel(file_path, sheet_name='pe_knock_out_prob_500')
@@ -15,8 +16,10 @@ pb_knock_out_prob_500 = pd.read_excel(file_path, sheet_name='pb_knock_out_prob_5
 pb_knock_out_prob_1000 = pd.read_excel(file_path, sheet_name='pb_knock_out_prob_1000')
 volatility_knock_out_prob_500 = pd.read_excel(file_path, sheet_name='volatility_knock_out_prob_500')
 volatility_knock_out_prob_1000 = pd.read_excel(file_path, sheet_name='volatility_knock_out_prob_1000')
-
-
+df_500_knock_rate_dict = pd.read_excel(file_path, sheet_name='df_500_knock_rate_dict')
+df_1000_knock_rate_dict = pd.read_excel(file_path, sheet_name='df_1000_knock_rate_dict')
+df_500_current_loss_ratio_dict = pd.read_excel(file_path, sheet_name='df_500_current_loss_ratio_dict')
+df_1000_current_loss_ratio_dict = pd.read_excel(file_path, sheet_name='df_1000_current_loss_ratio_dict')
 # 将数据框的列名转换为英文
 def rename_columns(df):
     df.columns = ['Metric', 'Total Samples', 'Valid Samples', 'Knockout Probability']
@@ -63,6 +66,7 @@ def plot_knock_out_prob(df, x_col, y_col, title):
     ax.set_ylabel(y_col)
     st.pyplot(fig)
 
+
 # Streamlit应用
 st.title('雪球产品敲出率分析')
 
@@ -86,22 +90,66 @@ else:
         'PB Knock Out Probability': pb_knock_out_prob_1000,
         'Volatility Knock Out Probability': volatility_knock_out_prob_1000
     }
-# 显示计算结果
-result_text = """
-当前中证500指数点位：4942.78, 点位敲出率：100.0%\n
-P/E: 21.2, P/E敲出率：81.48%\n
-P/B: 1.5567, P/B敲出率：100.0%\n
-波动率: 24.87%, 波动率敲出率：94.74%\n
-当前中证1000指数点位：4895.99, 点位敲出率：100.0%\n
-P/E: 31.59, P/E敲出率：65.38%\n
-P/B: 1.7054, P/B敲出率：100.0%\n
-波动率: 30.88%, 波动率敲出率：13.33%\n
-当前回测P/E: 26.82, 波动率: 20.32%, 历史回测亏损比例: 5.57%\n
-当前回测P/E: 39.91, 波动率: 20.35%, 历史回测亏损比例: 14.37%\n
+close_500 = df_500_knock_rate_dict.at[0, 'close']
+point_knock_out_prob_500 = df_500_knock_rate_dict.at[0, 'point_knock_out_prob']
+pe_500 = df_500_knock_rate_dict.at[0, 'pe']
+pe_knock_out_prob_500 = df_500_knock_rate_dict.at[0, 'pe_knock_out_prob']
+pb_500 = df_500_knock_rate_dict.at[0, 'pb']
+pb_knock_out_prob_500 = df_500_knock_rate_dict.at[0, 'pb_knock_out_prob']
+volatility_500 = df_500_knock_rate_dict.at[0, 'volatility']
+volatility_knock_out_prob_500 = df_500_knock_rate_dict.at[0, 'volatility_knock_out_prob']
+
+close_1000 = df_1000_knock_rate_dict.at[0, 'close']
+point_knock_out_prob_1000 = df_1000_knock_rate_dict.at[0, 'point_knock_out_prob']
+pe_1000 = df_1000_knock_rate_dict.at[0, 'pe']
+pe_knock_out_prob_1000 = df_1000_knock_rate_dict.at[0, 'pe_knock_out_prob']
+pb_1000 = df_1000_knock_rate_dict.at[0, 'pb']
+pb_knock_out_prob_1000 = df_1000_knock_rate_dict.at[0, 'pb_knock_out_prob']
+volatility_1000 = df_1000_knock_rate_dict.at[0, 'volatility']
+volatility_knock_out_prob_1000 = df_1000_knock_rate_dict.at[0, 'volatility_knock_out_prob']
+
+knock_out_prob_description = f"""
+### 中证500指数
+- 当前点位：**{close_500}**，点位敲出率：**{point_knock_out_prob_500}%**
+- P/E: **{pe_500}**，P/E敲出率：**{pe_knock_out_prob_500}%**
+- P/B: **{pb_500}**，P/B敲出率：**{pb_knock_out_prob_500}%**
+- 波动率: **{volatility_500}%**，波动率敲出率：**{volatility_knock_out_prob_500}%**
+
+### 中证1000指数
+- 当前点位：**{close_1000}**，点位敲出率：**{point_knock_out_prob_1000}%**
+- P/E: **{pe_1000}**，P/E敲出率：**{pe_knock_out_prob_1000}%**
+- P/B: **{pb_1000}**，P/B敲出率：**{pb_knock_out_prob_1000}%**
+- 波动率: **{volatility_1000}%**，波动率敲出率：**{volatility_knock_out_prob_1000}%**
 """
-st.markdown(result_text)
-# 遍历所有数据框并显示图表和数据
+st.markdown(knock_out_prob_description)
+
+pe_500_loss = df_500_current_loss_ratio_dict.at[0, "P/E"]
+test_pe_500_loss = df_500_current_loss_ratio_dict.at[0, "test P/E"]
+volatility_500_loss = df_500_current_loss_ratio_dict.at[0, "Volatility"]
+test_volatility_500_loss = df_500_current_loss_ratio_dict.at[0, "test Volatility"]
+loss_ratio_500 = df_500_current_loss_ratio_dict.at[0, "Loss Ratio"]
+
+pe_1000_loss = df_1000_current_loss_ratio_dict.at[0, "P/E"]
+test_pe_1000_loss = df_1000_current_loss_ratio_dict.at[0, "test P/E"]
+volatility_1000_loss = df_1000_current_loss_ratio_dict.at[0, "Volatility"]
+test_volatility_1000_loss = df_1000_current_loss_ratio_dict.at[0, "test Volatility"]
+loss_ratio_1000 = df_1000_current_loss_ratio_dict.at[0, "Loss Ratio"]
+
+loss_ratio_description = f"""
+### 中证500当前点位历史亏损回测
+- 回测P/E: **{pe_500_loss}**，实测P/E: **{test_pe_500_loss}**
+- 波动率: **{volatility_500_loss}%**，实测波动率: **{test_volatility_500_loss}%**
+- 历史回测亏损比例: **{loss_ratio_500}%**
+
+### 中证1000当前点位历史亏损回测
+- 回测P/E: **{pe_1000_loss}**，实测P/E: **{test_pe_1000_loss}**
+- 波动率: **{volatility_1000_loss}%**，实测波动率: **{test_volatility_1000_loss}%**
+- 历史回测亏损比例: **{loss_ratio_1000}%**
+"""
+st.markdown(loss_ratio_description)
+
 for title, df in df_map.items():
+
     st.subheader(title)
 
     # 样本个数和有效样本数柱状图
@@ -115,5 +163,4 @@ for title, df in df_map.items():
                         title=f'{title} - Knockout Probability Distribution')
 
     # 显示数据表
-    st.markdown("源数据")
     st.write(df)
