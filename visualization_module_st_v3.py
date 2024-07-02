@@ -2,9 +2,10 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import numpy as np
 
 # 读取Excel数据
-file_path = './data/snowball_model.xlsx'
+file_path = r'data\snowball_model.xlsx'
 df_500 = pd.read_excel(file_path, sheet_name='df_500')
 df_1000 = pd.read_excel(file_path, sheet_name='df_1000')
 point_knock_out_prob_500 = pd.read_excel(file_path, sheet_name='point_knock_out_prob_500')
@@ -37,14 +38,18 @@ volatility_knock_out_prob_1000 = rename_columns(volatility_knock_out_prob_1000)
 # 绘制函数 - 样本个数和有效样本数柱状图
 def plot_data_combined(df, x_col, y_cols, title):
     fig = go.Figure()
+
+    x = df[x_col]
+
     fig.add_trace(go.Bar(
-        x=df[x_col],
+        x=x,
         y=df[y_cols[0]],
         name=y_cols[0],
         marker_color='blue'
     ))
+
     fig.add_trace(go.Bar(
-        x=df[x_col],
+        x=x,
         y=df[y_cols[1]],
         name=y_cols[1],
         marker_color='red'
@@ -52,21 +57,9 @@ def plot_data_combined(df, x_col, y_cols, title):
 
     fig.update_layout(
         title=title,
-        xaxis_tickfont_size=14,
-        yaxis=dict(
-            title='Sample Count',
-            titlefont_size=16,
-            tickfont_size=14,
-        ),
-        legend=dict(
-            x=0,
-            y=1.0,
-            bgcolor='rgba(255, 255, 255, 0)',
-            bordercolor='rgba(255, 255, 255, 0)'
-        ),
-        barmode='group',
-        bargap=0.15,
-        bargroupgap=0.1
+        xaxis=dict(title=x_col),
+        yaxis=dict(title='Sample Count'),
+        barmode='group'
     )
 
     st.plotly_chart(fig)
@@ -74,7 +67,6 @@ def plot_data_combined(df, x_col, y_cols, title):
 # 绘制函数 - 敲出胜率线性图
 def plot_knock_out_prob(df, x_col, y_col, title):
     fig = px.line(df, x=x_col, y=y_col, title=title, markers=True)
-    fig.update_traces(marker=dict(size=10))
     st.plotly_chart(fig)
 
 # Streamlit应用
@@ -100,7 +92,6 @@ else:
         'PB Knock Out Probability': pb_knock_out_prob_1000,
         'Volatility Knock Out Probability': volatility_knock_out_prob_1000
     }
-
 close_500 = df_500_knock_rate_dict.at[0, 'close']
 point_knock_out_prob_500 = df_500_knock_rate_dict.at[0, 'point_knock_out_prob']
 pe_500 = df_500_knock_rate_dict.at[0, 'pe']
@@ -164,14 +155,14 @@ for title, df in df_map.items():
     st.subheader(title)
 
     # 样本个数和有效样本数柱状图
-    st.write(f'{title} - Sample and Knock Out Samples Distribution')
+    st.write(f'{title} - 有效样本和敲出样本分布情况')
     plot_data_combined(df, x_col=df.columns[0], y_cols=['Total Samples', 'Valid Samples'],
-                       title=f'{title} - Sample Count and Valid Samples Distribution')
+                       title="")
 
     # 敲出胜率线性图
-    st.write(f'{title} - Knockout Probability Distribution')
+    st.write(f'{title} - 敲出概率分布')
     plot_knock_out_prob(df, x_col=df.columns[0], y_col='Knockout Probability',
-                        title=f'{title} - Knockout Probability Distribution')
+                        title="")
 
     # 显示数据表
     st.write(df)
