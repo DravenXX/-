@@ -1,0 +1,144 @@
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+import numpy as np
+
+# 读取Excel数据
+file_path = r'D:\工作\240628_雪球测算建模\snowball_model.xlsx'
+df_500 = pd.read_excel(file_path, sheet_name='df_500')
+df_1000 = pd.read_excel(file_path, sheet_name='df_1000')
+point_knock_out_prob_500 = pd.read_excel(file_path, sheet_name='point_knock_out_prob_500')
+point_knock_out_prob_1000 = pd.read_excel(file_path, sheet_name='point_knock_out_prob_1000')
+pe_knock_out_prob_500 = pd.read_excel(file_path, sheet_name='pe_knock_out_prob_500')
+pe_knock_out_prob_1000 = pd.read_excel(file_path, sheet_name='pe_knock_out_prob_1000')
+pb_knock_out_prob_500 = pd.read_excel(file_path, sheet_name='pb_knock_out_prob_500')
+pb_knock_out_prob_1000 = pd.read_excel(file_path, sheet_name='pb_knock_out_prob_1000')
+volatility_knock_out_prob_500 = pd.read_excel(file_path, sheet_name='volatility_knock_out_prob_500')
+volatility_knock_out_prob_1000 = pd.read_excel(file_path, sheet_name='volatility_knock_out_prob_1000')
+df_500_knock_rate_dict = pd.read_excel(file_path, sheet_name='df_500_knock_rate_dict')
+df_1000_knock_rate_dict = pd.read_excel(file_path, sheet_name='df_1000_knock_rate_dict')
+df_500_current_loss_ratio_dict = pd.read_excel(file_path, sheet_name='df_500_current_loss_ratio_dict')
+df_1000_current_loss_ratio_dict = pd.read_excel(file_path, sheet_name='df_1000_current_loss_ratio_dict')
+
+# 将数据框的列名转换为英文
+def rename_columns(df):
+    df.columns = ['Metric', 'Total Samples', 'Valid Samples', 'Knockout Probability']
+    return df
+
+point_knock_out_prob_500 = rename_columns(point_knock_out_prob_500)
+point_knock_out_prob_1000 = rename_columns(point_knock_out_prob_1000)
+pe_knock_out_prob_500 = rename_columns(pe_knock_out_prob_500)
+pe_knock_out_prob_1000 = rename_columns(pe_knock_out_prob_1000)
+pb_knock_out_prob_500 = rename_columns(pb_knock_out_prob_500)
+pb_knock_out_prob_1000 = rename_columns(pb_knock_out_prob_1000)
+volatility_knock_out_prob_500 = rename_columns(volatility_knock_out_prob_500)
+volatility_knock_out_prob_1000 = rename_columns(volatility_knock_out_prob_1000)
+
+# 绘制函数 - 样本个数和有效样本数柱状图
+def plot_data_combined(df, x_col, y_cols, title):
+    fig = go.Figure()
+
+    x = df[x_col]
+
+    fig.add_trace(go.Bar(
+        x=x,
+        y=df[y_cols[0]],
+        name=y_cols[0],
+        marker_color='blue'
+    ))
+
+    fig.add_trace(go.Bar(
+        x=x,
+        y=df[y_cols[1]],
+        name=y_cols[1],
+        marker_color='red'
+    ))
+
+    fig.update_layout(
+        title=title,
+        xaxis=dict(title=x_col),
+        yaxis=dict(title='Sample Count'),
+        barmode='group'
+    )
+
+    st.plotly_chart(fig)
+
+# 绘制函数 - 敲出胜率线性图
+def plot_knock_out_prob(df, x_col, y_col, title):
+    fig = px.line(df, x=x_col, y=y_col, title=title, markers=True)
+    st.plotly_chart(fig)
+
+# Streamlit应用
+st.title('雪球产品敲出率分析')
+
+# 选择数据框
+index_option = st.selectbox(
+    'Select Index',
+    ('500', '1000'))
+
+# 根据选择映射数据框
+if index_option == '500':
+    df_map = {
+        'Point Knock Out Probability': point_knock_out_prob_500,
+        'PE Knock Out Probability': pe_knock_out_prob_500,
+        'PB Knock Out Probability': pb_knock_out_prob_500,
+        'Volatility Knock Out Probability': volatility_knock_out_prob_500
+    }
+    
+    knock_out_prob_description = f"""
+    ### 中证500指数
+    - 当前点位：**{close_500}**，点位敲出率：**{point_knock_out_prob_500}%**
+    - P/E: **{pe_500}**，P/E敲出率：**{pe_knock_out_prob_500}%**
+    - P/B: **{pb_500}**，P/B敲出率：**{pb_knock_out_prob_500}%**
+    - 波动率: **{volatility_500}%**，波动率敲出率：**{volatility_knock_out_prob_500}%**
+    """
+    
+    loss_ratio_description = f"""
+    ### 中证500当前点位历史亏损回测
+    - 回测P/E: **{pe_500_loss}**，实测P/E: **{test_pe_500_loss}**
+    - 波动率: **{volatility_500_loss}%**，实测波动率: **{test_volatility_500_loss}%**
+    - 历史回测亏损比例: **{loss_ratio_500}%**
+    """
+else:
+    df_map = {
+        'Point Knock Out Probability': point_knock_out_prob_1000,
+        'PE Knock Out Probability': pe_knock_out_prob_1000,
+        'PB Knock Out Probability': pb_knock_out_prob_1000,
+        'Volatility Knock Out Probability': volatility_knock_out_prob_1000
+    }
+    
+    knock_out_prob_description = f"""
+    ### 中证1000指数
+    - 当前点位：**{close_1000}**，点位敲出率：**{point_knock_out_prob_1000}%**
+    - P/E: **{pe_1000}**，P/E敲出率：**{pe_knock_out_prob_1000}%**
+    - P/B: **{pb_1000}**，P/B敲出率：**{pb_knock_out_prob_1000}%**
+    - 波动率: **{volatility_1000}%**，波动率敲出率：**{volatility_knock_out_prob_1000}%**
+    """
+    
+    loss_ratio_description = f"""
+    ### 中证1000当前点位历史亏损回测
+    - 回测P/E: **{pe_1000_loss}**，实测P/E: **{test_pe_1000_loss}**
+    - 波动率: **{volatility_1000_loss}%**，实测波动率: **{test_volatility_1000_loss}%**
+    - 历史回测亏损比例: **{loss_ratio_1000}%**
+    """
+
+st.markdown(knock_out_prob_description)
+st.markdown(loss_ratio_description)
+
+for title, df in df_map.items():
+
+    st.subheader(title)
+
+    # 样本个数和有效样本数柱状图
+    st.write(f'{title} - 有效样本和敲出样本分布情况')
+    plot_data_combined(df, x_col=df.columns[0], y_cols=['Total Samples', 'Valid Samples'],
+                       title="")
+
+    # 敲出胜率线性图
+    st.write(f'{title} - 敲出概率分布')
+    plot_knock_out_prob(df, x_col=df.columns[0], y_col='Knockout Probability',
+                        title="")
+
+    # 显示数据表
+    st.write(df)
