@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 import numpy as np
 
 # 读取Excel数据
-file_path = r'D:\工作\240628_雪球测算建模\snowball_model.xlsx'
+file_path = r'data\snowball_model.xlsx'
 df_500 = pd.read_excel(file_path, sheet_name='df_500')
 df_1000 = pd.read_excel(file_path, sheet_name='df_1000')
 point_knock_out_prob_500 = pd.read_excel(file_path, sheet_name='point_knock_out_prob_500')
