@@ -111,7 +111,7 @@ volatility_knock_out_prob_500 = df_500_knock_rate_dict.at[0, 'volatility_knock_o
 
 close_1000 = df_1000_knock_rate_dict.at[0, 'close']
 point_knock_out_prob_1000 = df_1000_knock_rate_dict.at[0, 'point_knock_out_prob']
-point_threshold_1000 = df_500_knock_rate_dict.at[0, 'point_threshold']
+point_threshold_1000 = df_1000_knock_rate_dict.at[0, 'point_threshold']
 pe_1000 = df_1000_knock_rate_dict.at[0, 'pe']
 pe_knock_out_prob_1000 = df_1000_knock_rate_dict.at[0, 'pe_knock_out_prob']
 pe_threshold_1000 = df_1000_knock_rate_dict.at[0, 'pe_threshold']
